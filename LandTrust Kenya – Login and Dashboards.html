@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LandTrust Kenya – Land Records Management System</title>
+<style>
+:root{--navy:#1f4e79;--blue:#2e6da4;--head:#1f4e79;--bg:#f4f6f8;--card:#fff;--line:#b8c2cc;--row:#e3e8ed;--text:#2b2b2b;--mute:#6b7680;--redbg:#fde8e8;--red:#c0392b;--grnbg:#e6f0e6;--grn:#2e7d32;--field:#f7f9fb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--head:#8fc0ea;--bg:#12181e;--card:#1b232b;--line:#3a4650;--row:#2a343d;--text:#e6ebef;--mute:#9aa7b2;--redbg:#3a1d1d;--red:#ff8a80;--grnbg:#1d3324;--grn:#7fd28a;--field:#141b21}}
+:root[data-theme="dark"]{--head:#8fc0ea;--bg:#12181e;--card:#1b232b;--line:#3a4650;--row:#2a343d;--text:#e6ebef;--mute:#9aa7b2;--redbg:#3a1d1d;--red:#ff8a80;--grnbg:#1d3324;--grn:#7fd28a;--field:#141b21}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--text);font:15px/1.45 Arial,Helvetica,sans-serif}
+h1,h2{color:var(--head);margin:0 0 14px;font-size:22px}h2{font-size:19px;margin-top:26px}
+label{display:block;font-weight:700;margin:14px 0 6px}
+input,select{width:100%;padding:11px 12px;border:2px solid var(--line);border-radius:8px;background:var(--field);color:var(--text);font:inherit}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+button{font:inherit;font-weight:700;padding:11px 20px;border-radius:8px;border:2px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+button.ghost{background:var(--card);color:var(--head);border-color:var(--line)}
+a.lnk{color:var(--head);font-weight:700;background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lcard{background:var(--card);border:2px solid var(--navy);border-radius:16px;width:100%;max-width:440px;padding:32px 30px}
+.lcard h1{text-align:center;font-size:26px;margin-bottom:4px}.sub{text-align:center;color:var(--mute);margin:0 0 18px;padding-bottom:14px;border-bottom:2px solid var(--row)}
+.roles{display:flex;gap:28px;margin-top:6px}.roles label{font-weight:400;margin:0;display:flex;gap:8px;align-items:center}.roles input{width:auto}
+.err{background:var(--redbg);color:var(--red);border:2px solid var(--red);border-radius:8px;padding:10px 12px;margin:14px 0 0}
+.hint{color:var(--mute);font-size:13px;text-align:center;margin:14px 0 0}
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:var(--navy);color:#fff;flex:none;display:flex;flex-direction:column}
+.side .who{text-align:center;font-weight:700;padding:28px 10px 6px}.side .nm{text-align:center;font-size:13px;opacity:.8;padding-bottom:22px}
+.side button{background:none;border:0;border-radius:0;color:#fff;text-align:left;font-weight:400;padding:14px 26px;width:100%}
+.side button.on{background:var(--blue);font-weight:700}
+main{flex:1;padding:24px 28px;min-width:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}.srch{display:flex;gap:16px}.srch button{flex:none}
+.alert{background:var(--redbg);color:var(--red);border:2px solid var(--red);border-radius:8px;padding:11px 16px;margin-bottom:6px}
+.wrap{overflow-x:auto;margin-top:16px}
+table{border-collapse:collapse;width:100%;background:var(--card);min-width:560px}
+th{background:var(--navy);color:#fff;padding:13px 10px}td{padding:13px 10px;text-align:center;border-bottom:1px solid var(--row)}
+.pill{display:inline-block;padding:4px 18px;border-radius:14px;font-size:13px;font-weight:700;background:var(--grnbg);color:var(--grn)}.pill.dup{background:var(--redbg);color:var(--red)}.pill.off{background:var(--row);color:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}
+.stat{background:var(--card);border:2px solid var(--row);border-radius:10px;padding:16px}.stat b{display:block;font-size:28px;color:var(--head)}
+.cert{background:#fff;color:#222;border:3px double var(--navy);padding:28px;margin-top:20px;max-width:640px}.cert h3{text-align:center;color:#1f4e79;margin:0 0 4px}.cert p{margin:6px 0}.cert .c{text-align:center;color:#555}
+dialog{border:2px solid var(--navy);border-radius:12px;background:var(--card);color:var(--text);width:min(560px,92vw)}dialog::backdrop{background:#0008}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 20px;border-radius:8px;display:none;z-index:9}
+@media(max-width:760px){.app{flex-direction:column}.side{width:100%;flex-direction:row;flex-wrap:wrap}.side .who,.side .nm{display:none}.side button{width:auto;padding:12px 14px}.grid{grid-template-columns:1fr}main{padding:18px 14px}.srch{flex-direction:column;gap:10px}}
+@media print{body *{visibility:hidden}#cert,#cert *{visibility:visible}#cert{position:absolute;left:0;top:0;width:100%;max-width:none}}
+</style>
+</head>
+<body>
+<div id="root"></div><div id="toast" role="status"></div>
+<dialog id="dlg"></dialog>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],p2=n=>String(n).padStart(2,'0');
+const fmt=(d,t)=>`${p2(d.getDate())}-${M[d.getMonth()]}-${d.getFullYear()}`+(t?` ${p2(d.getHours())}:${p2(d.getMinutes())}`:'');
+const D=(y,m,d,h,mi)=>new Date(y,m,d,h,mi);
+const RO='Records Officer',AD='Administrator';
+/* In-memory prototype data (resets on reload). Demo passwords are plain text: replace with hashed server-side auth in production. */
+const db={
+ users:[{id:'RO-2026-014',name:'J. Kamau',pw:'officer123',role:RO,active:true,fails:0},
+        {id:'RO-2026-007',name:'P. Njeri',pw:'officer456',role:RO,active:true,fails:0},
+        {id:'ADM-002',name:'S. Otieno',pw:'admin123',role:AD,active:true,fails:0}],
+ recs:[{title:'NAK/1234/2019',owner:'Peter Mwangi',nid:'12345678',size:1.8,loc:'Nakuru East',use:'Residential',date:'12-Mar-2019',deed:'deed_1234_2019.pdf',status:'Active'},
+       {title:'NAK/1234/2019',owner:'Jane Wanjiru',nid:'24581234',size:1.8,loc:'Nakuru East',use:'Residential',date:'23-Sep-2026',deed:'',status:'DUPLICATE'},
+       {title:'NAK/0987/2015',owner:'Samuel Kiptoo',nid:'20987654',size:3.2,loc:'Nakuru West',use:'Agricultural',date:'04-Aug-2015',deed:'deed_0987.pdf',status:'Active'},
+       {title:'NAK/0456/2021',owner:'Grace Achieng',nid:'30456789',size:0.9,loc:'Njoro',use:'Commercial',date:'19-Jan-2021',deed:'deed_0456.pdf',status:'Active'}],
+ audit:[[D(2026,8,23,9,14),'RO-2026-014 J.Kamau','Created new record','NAK/1234/2026'],[D(2026,8,23,9,20),'RO-2026-014 J.Kamau','Duplicate flagged','NAK/1234/2019'],
+        [D(2026,8,22,15,2),'ADM-002 S.Otieno','Edited record','NAK/0987/2015'],[D(2026,8,22,11,47),'RO-2026-007 P.Njeri','Generated certificate','NAK/0456/2021']].reverse()
+};
+let S=null,view='dash',dupBanner='',certRec=null,q='';
+const NAV={[RO]:[['dash','Dashboard'],['add','Add Land Record'],['search','Search Records'],['upload','Upload Title Deed'],['dups','Duplicate Alerts'],['out','Logout']],
+           [AD]:[['dash','Dashboard'],['users','User Accounts'],['perms','Permissions'],['audit','Audit Trail'],['reports','Generate Reports'],['out','Logout']]};
+function log(a,r){db.audit.unshift([new Date(),`${S.id} ${S.name}`,a,r])}
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',2600)}
+
+/* ---------- LOGIN ---------- */
+function showLogin(msg){
+ $('root').innerHTML=`<div class="login"><form class="lcard" onsubmit="doLogin(event)" novalidate>
+ <h1>LandTrust Kenya</h1><p class="sub">Land Records Management System</p>
+ <label for="u">Username / Staff ID</label><input id="u" placeholder="e.g. RO-2026-014" autocomplete="username" autofocus>
+ <label for="p">Password</label><input id="p" type="password" autocomplete="current-password">
+ <label style="margin-bottom:0">Login as:</label>
+ <div class="roles"><label><input type="radio" name="r" value="${RO}" checked> Records Officer</label><label><input type="radio" name="r" value="${AD}"> Administrator</label></div>
+ <div id="le" class="err" role="alert" style="${msg?'':'display:none'}">${esc(msg||'')}</div>
+ <button style="width:100%;margin-top:22px;font-size:17px">LOGIN</button>
+ <p class="hint">Forgot password? Contact system administrator</p>
+ <p class="hint">Demo: RO-2026-014 / officer123 (Records Officer) · ADM-002 / admin123 (Administrator)</p></form></div>`}
+function doLogin(e){
+ e.preventDefault();
+ const id=$('u').value.trim().toUpperCase(),pw=$('p').value,role=document.querySelector('input[name=r]:checked').value;
+ const bad=m=>{const x=$('le');x.textContent=m;x.style.display='block'};
+ if(!id||!pw)return bad('Enter your staff ID and password.');
+ const u=db.users.find(x=>x.id===id);
+ if(!u)return bad('Staff ID or password is incorrect. Check both and try again.');
+ if(!u.active)return bad('This account is locked or deactivated. Contact the system administrator.');
+ if(u.pw!==pw){u.fails++;if(u.fails>=3){u.active=false;return bad('Too many failed attempts. Account locked; contact the system administrator.')}
+  return bad(`Staff ID or password is incorrect. ${3-u.fails} attempt(s) left.`)}
+ if(u.role!==role)return bad(`This account is not registered as ${role}. Select the correct role.`);
+ u.fails=0;S=u;view='dash';certRec=null;dupBanner='';q='';
+ log('Logged in','—');shell()}
+function logout(){log('Logged out','—');S=null;showLogin()}
+
+/* ---------- SHELL ---------- */
+function shell(){
+ const nav=NAV[S.role].map(([k,l])=>`<button class="${k===view?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ $('root').innerHTML=`<div class="app"><nav class="side" aria-label="Main"><div class="who">${S.role.toUpperCase()}</div><div class="nm">${esc(S.id)} · ${esc(S.name)}</div>${nav}</nav><main id="m"></main></div>`;
+ const V={dash,add,search,upload,dups,users,perms,audit,reports};$('m').innerHTML=V[view]()}
+function go(k){if(k==='out')return logout();view=k;if(k!=='add')dupBanner='';shell()}
+const pill=s=>`<span class="pill ${s==='Active'?'':s==='DUPLICATE'?'dup':'off'}">${s}</span>`;
+const idx=r=>db.recs.indexOf(r);
+
+/* ---------- RECORDS ---------- */
+function tbl(rows){
+ if(!rows.length)return '<p>No records match your search. Try a title number, owner name or parcel ID.</p>';
+ return `<div class="wrap"><table><tr><th>Title No.</th><th>Owner Name</th><th>Parcel Size</th><th>Location</th><th>Status</th><th>Actions</th></tr>${
+ rows.map(r=>`<tr><td>${esc(r.title)}</td><td>${esc(r.owner)}</td><td>${r.size} Ac</td><td>${esc(r.loc)}</td><td>${pill(r.status)}</td><td><button class="lnk" style="all:unset;cursor:pointer;color:var(--head);font-weight:700" onclick="edit(${idx(r)})">${r.status==='DUPLICATE'?'Review':'View / Edit'}</button></td></tr>`).join('')}</table></div>`}
+function found(){const s=q.toLowerCase();return db.recs.filter(r=>!s||[r.title,r.owner,r.nid,r.loc].some(v=>v.toLowerCase().includes(s)))}
+function dash(){
+ const d=db.recs.filter(r=>r.status==='DUPLICATE').length;
+ let h=`<h1>Dashboard</h1><div class="stats"><div class="stat"><b>${db.recs.length}</b>Land records</div><div class="stat"><b>${d}</b>Duplicate alerts</div>`+
+ (S.role===AD?`<div class="stat"><b>${db.users.length}</b>Staff accounts</div><div class="stat"><b>${db.audit.length}</b>Audit entries</div>`:`<div class="stat"><b>${db.audit.filter(a=>a[1].startsWith(S.id)&&a[2]==='Created new record').length}</b>Records you added</div>`)+'</div>';
+ return h+`<h2>Search Land Records</h2>${srch()}<div id="res">${tbl(found())}</div>`}
+function srch(){return `<div class="srch"><input id="q" value="${esc(q)}" placeholder="Search by Title No. / Owner Name / Parcel ID ..." aria-label="Search records" onkeydown="if(event.key==='Enter')runQ()"><button onclick="runQ()">Search</button></div>`}
+function runQ(){q=$('q').value.trim();$('res').innerHTML=tbl(found())}
+function search(){return `<h1>Search Land Records</h1>${srch()}<div id="res">${tbl(found())}</div>`}
+function add(){
+ return `<h1>Add New Land Record</h1><div id="db">${dupBanner}</div><form onsubmit="save(event)" novalidate><div class="grid"><div>
+ <label for="f_o">Owner Full Name</label><input id="f_o"><label for="f_n">National ID No.</label><input id="f_n" inputmode="numeric" placeholder="7–8 digits">
+ <label for="f_t">Title / Parcel Number</label><input id="f_t" placeholder="NAK/1234/2026" onblur="chkDup()"><label for="f_s">Parcel Size (Acres)</label><input id="f_s" type="number" step="0.01" min="0"></div><div>
+ <label for="f_l">Location / Ward</label><input id="f_l"><label for="f_u">Land Use Type</label><select id="f_u"><option>Residential</option><option>Agricultural</option><option>Commercial</option><option>Industrial</option></select>
+ <label for="f_d">Registration Date</label><input id="f_d" value="${fmt(new Date())}" readonly><label for="f_f">Scanned Title Deed</label><input id="f_f" type="file" accept=".pdf,image/*"></div></div>
+ <p id="fe" class="err" role="alert" style="display:none"></p>
+ <div class="row" style="margin-top:20px"><button>Save Record</button><button type="button" class="ghost" onclick="go('dash')">Cancel</button></div></form>`}
+const dupMsg=t=>`<div class="alert" role="alert">ALERT — Duplicate Record: Title No. ${esc(t)} already exists in database</div>`;
+const isDup=t=>db.recs.some(r=>r.title.toUpperCase()===t.toUpperCase());
+function chkDup(){const t=$('f_t').value.trim();$('db').innerHTML=t&&isDup(t)?dupMsg(t.toUpperCase()):''}
+function save(e){
+ e.preventDefault();
+ const g=i=>$(i).value.trim(),t=g('f_t').toUpperCase(),er=m=>{const x=$('fe');x.textContent=m;x.style.display='block'};
+ if(!g('f_o')||!g('f_n')||!t||!g('f_s')||!g('f_l'))return er('Fill in owner name, national ID, title number, parcel size and location.');
+ if(!/^\d{7,8}$/.test(g('f_n')))return er('National ID must be 7 or 8 digits.');
+ if(!/^[A-Z]{3}\/\d{1,5}\/\d{4}$/.test(t))return er('Title number must look like NAK/1234/2026.');
+ if(!(+g('f_s')>0))return er('Parcel size must be more than 0 acres.');
+ const dup=isDup(t),f=$('f_f').files[0];
+ db.recs.push({title:t,owner:g('f_o'),nid:g('f_n'),size:+g('f_s'),loc:g('f_l'),use:$('f_u').value,date:g('f_d'),deed:f?f.name:'',status:dup?'DUPLICATE':'Active'});
+ log('Created new record',t);if(dup)log('Duplicate flagged',t);
+ if(dup){dupBanner=dupMsg(t);toast('Saved and flagged as duplicate')}else{dupBanner='';toast('Record saved')}
+ shell()}
+function upload(){
+ const opts=db.recs.map((r,i)=>`<option value="${i}">${esc(r.title)} — ${esc(r.owner)}${r.deed?' (has deed)':''}</option>`).join('');
+ return `<h1>Upload Title Deed</h1><form onsubmit="upl(event)" style="max-width:520px"><label for="ur">Land record</label><select id="ur">${opts}</select>
+ <label for="uf">Scanned title deed (PDF or image)</label><input id="uf" type="file" accept=".pdf,image/*"><p id="ue" class="err" role="alert" style="display:none"></p><div class="row" style="margin-top:20px"><button>Upload deed</button></div></form>`}
+function upl(e){e.preventDefault();const f=$('uf').files[0];if(!f){const x=$('ue');x.textContent='Choose a file to upload.';x.style.display='block';return}
+ const r=db.recs[+$('ur').value];r.deed=f.name;log('Uploaded title deed',r.title);toast('Deed uploaded');shell()}
+function dups(){const r=db.recs.filter(r=>r.status==='DUPLICATE');
+ return `<h1>Duplicate Alerts</h1>`+(r.length?r.map(x=>dupMsg(x.title)).join('')+tbl(r):'<p>No duplicate records. New duplicates appear here as soon as they are detected.</p>')}
+function edit(i){
+ const r=db.recs[i],d=$('dlg');
+ d.innerHTML=`<form method="dialog" onsubmit="return upd(event,${i})"><h1>${esc(r.title)}</h1>
+ <label for="e_o">Owner Full Name</label><input id="e_o" value="${esc(r.owner)}"><label for="e_l">Location / Ward</label><input id="e_l" value="${esc(r.loc)}">
+ <label for="e_s">Parcel Size (Acres)</label><input id="e_s" type="number" step="0.01" value="${r.size}"><label for="e_st">Status</label><select id="e_st"><option ${r.status==='Active'?'selected':''}>Active</option><option ${r.status==='DUPLICATE'?'selected':''}>DUPLICATE</option></select>
+ <p style="color:var(--mute)">National ID ${esc(r.nid)} · Deed: ${esc(r.deed||'not uploaded')}</p>
+ <div class="row" style="margin-top:8px"><button>Save changes</button><button type="button" class="ghost" onclick="$('dlg').close()">Close</button></div></form>`;
+ log('Viewed record',r.title);d.showModal()}
+function upd(e,i){const r=db.recs[i],o=$('e_o').value.trim(),l=$('e_l').value.trim(),s=+$('e_s').value;
+ if(!o||!l||!(s>0)){toast('Owner, location and a size above 0 are required');return false}
+ Object.assign(r,{owner:o,loc:l,size:s,status:$('e_st').value});log('Edited record',r.title);toast('Changes saved');setTimeout(shell,0);return true}
+
+/* ---------- ADMIN ---------- */
+function users(){
+ return `<h1>User Accounts</h1><div class="wrap"><table><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Status</th><th>Actions</th></tr>${
+ db.users.map((u,i)=>`<tr><td>${esc(u.id)}</td><td>${esc(u.name)}</td><td>${u.role}</td><td>${pill(u.active?'Active':'Locked')}</td><td>${u.id===S.id?'—':`<button style="all:unset;cursor:pointer;color:var(--head);font-weight:700" onclick="tgl(${i})">${u.active?'Deactivate':'Activate'}</button>`}</td></tr>`).join('')}</table></div>
+ <h2>Add Staff Account</h2><form onsubmit="addU(event)" style="max-width:520px"><label for="n_i">Staff ID</label><input id="n_i" placeholder="RO-2026-021"><label for="n_n">Name</label><input id="n_n">
+ <label for="n_p">Temporary password (8+ characters)</label><input id="n_p" type="password"><label for="n_r">Role</label><select id="n_r"><option>${RO}</option><option>${AD}</option></select>
+ <p id="ne" class="err" role="alert" style="display:none"></p><div class="row" style="margin-top:20px"><button>Create account</button></div></form>`}
+function tgl(i){const u=db.users[i];u.active=!u.active;u.fails=0;log(u.active?'Activated account':'Deactivated account',u.id);shell()}
+function addU(e){e.preventDefault();const id=$('n_i').value.trim().toUpperCase(),n=$('n_n').value.trim(),p=$('n_p').value,x=$('ne'),er=m=>{x.textContent=m;x.style.display='block'};
+ if(!id||!n||p.length<8)return er('Enter a staff ID, a name and a password of at least 8 characters.');
+ if(db.users.some(u=>u.id===id))return er('That staff ID already exists.');
+ db.users.push({id,name:n,pw:p,role:$('n_r').value,active:true,fails:0});log('Created account',id);toast('Account created');shell()}
+const CAP=[['Log in','1,1'],['Add and edit land records','1,1'],['Search and retrieve records','1,1'],['Upload scanned title deeds','1,1'],['View duplicate alerts','1,1'],['Generate ownership reports','1,1'],['Manage user accounts and permissions','0,1'],['View audit trail','0,1']];
+function perms(){return `<h1>Permissions</h1><p>Access is granted by role. These permissions are enforced at login and on every panel.</p><div class="wrap"><table><tr><th>Capability</th><th>${RO}</th><th>${AD}</th></tr>${
+ CAP.map(([c,v])=>{const [a,b]=v.split(',');return `<tr><td style="text-align:left">${c}</td><td>${a==='1'?'Allowed':'—'}</td><td>${b==='1'?'Allowed':'—'}</td></tr>`}).join('')}</table></div>`}
+function auditTbl(){return `<div class="wrap"><table><tr><th>Date / Time</th><th>User</th><th>Action</th><th>Record ID</th></tr>${
+ db.audit.map(a=>`<tr><td>${fmt(a[0],1)}</td><td>${esc(a[1])}</td><td>${esc(a[2])}</td><td>${esc(a[3])}</td></tr>`).join('')}</table></div>`}
+function genBox(){return `<h2>Generate Ownership Report / Certificate</h2><label for="g_t">Title / Parcel Number</label><div class="srch"><input id="g_t" placeholder="NAK/0456/2021" onkeydown="if(event.key==='Enter')gen()"><button onclick="gen()">Generate</button><button class="ghost" onclick="pdf()">Download PDF</button></div><p id="ge" class="err" role="alert" style="display:none"></p><div id="certbox"></div>`}
+function audit(){return `<h1>Audit Trail / Activity Log</h1>${auditTbl()}${genBox()}`}
+function reports(){return `<h1>Generate Reports</h1>${genBox()}`}
+function gen(){
+ const t=$('g_t').value.trim().toUpperCase(),x=$('ge');x.style.display='none';
+ const r=db.recs.find(r=>r.title.toUpperCase()===t&&r.status==='Active');
+ if(!r){certRec=null;$('certbox').innerHTML='';x.textContent=t?'No active record found for that title number. Check the number or resolve duplicates first.':'Enter a title / parcel number.';x.style.display='block';return}
+ certRec=r;log('Generated certificate',r.title);const n=new Date();
+ $('certbox').innerHTML=`<div class="cert" id="cert"><h3>LandTrust Kenya, Nakuru</h3><p class="c">Certificate of Ownership Record</p><hr>
+ <p><b>Title / Parcel No.:</b> ${esc(r.title)}</p><p><b>Registered owner:</b> ${esc(r.owner)}</p><p><b>National ID:</b> ${esc(r.nid.slice(0,5))}xxx</p>
+ <p><b>Parcel size:</b> ${r.size} acres</p><p><b>Location:</b> ${esc(r.loc)}</p><p><b>Land use:</b> ${esc(r.use)}</p><p><b>Registered on:</b> ${esc(r.date)}</p>
+ <p><b>Title deed on file:</b> ${r.deed?'Yes':'No'}</p><hr><p class="c">Generated ${fmt(n,1)} by ${esc(S.id)} ${esc(S.name)}</p></div>`}
+function pdf(){if(!certRec)return gen();window.print()}
+showLogin();
+</script>
+</body>
+</html>
